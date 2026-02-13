@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>RearSilver Stream HUD</title>
+
+<style>
+:root {
+    --bg: rgba(18,20,24,0.95);
+    --panel: rgba(28,30,36,0.98);
+    --border: rgba(255,255,255,0.08);
+    --text: rgba(255,255,255,0.9);
+}
+
+body {
+    margin: 0;
+    background: transparent;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    display: flex;
+    height: 100vh;
+    color: var(--text);
+}
+
+.container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+    backdrop-filter: blur(14px);
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.topbar {
+    height: 36px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
+}
+
+.toggle-btn {
+    cursor: pointer;
+    font-size: 14px;
+    opacity: 0.7;
+}
+
+.section {
+    flex: 1;
+    overflow: hidden;
+}
+
+iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* Control Drawer */
+
+.drawer {
+    position: absolute;
+    top: 0;
+    right: -260px;
+    width: 260px;
+    height: 100%;
+    background: var(--panel);
+    border-left: 1px solid var(--border);
+    padding: 16px;
+    transition: right 0.25s ease;
+}
+
+.drawer.open {
+    right: 0;
+}
+
+label {
+    font-size: 12px;
+    opacity: 0.7;
+    margin-top: 12px;
+    display: block;
+}
+
+input[type=range] {
+    width: 100%;
+}
+
+select {
+    width: 100%;
+    padding: 6px;
+    background: #101218;
+    border: 1px solid var(--border);
+    color: white;
+    border-radius: 6px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="topbar">
+        <span>Stream HUD</span>
+        <span class="toggle-btn" onclick="toggleDrawer()">⚙</span>
+    </div>
+
+    <div class="section">
+        <iframe id="chatFrame"></iframe>
+    </div>
+
+</div>
+
+<div class="drawer" id="drawer">
+
+    <label>Anchor</label>
+    <select id="anchor">
+        <option value="0">World</option>
+        <option value="1">Head</option>
+        <option value="2">Right Hand</option>
+        <option value="3">Left Hand</option>
+    </select>
+
+    <label>Size</label>
+    <input id="size" type="range" min="0.2" max="1.2" step="0.05" value="0.35">
+
+    <label>Opacity</label>
+    <input id="opacity" type="range" min="0.2" max="1" step="0.05" value="0.9">
+
+    <label>Curvature</label>
+    <input id="curve" type="range" min="0" max="1" step="0.05" value="0">
+
+    <label>Framerate</label>
+    <input id="fps" type="range" min="15" max="60" step="5" value="30">
+
+</div>
+
+<script src="https://rearsilvergaming.github.io/ovrt-stream-hud/ovrt-helper.js"></script>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const channel = params.get("channel");
+
+if (channel) {
+    document.getElementById("chatFrame").src =
+        "https://www.twitch.tv/embed/" + channel +
+        "/chat?parent=rearsilvergaming.github.io&darkpopout";
+}
+
+function toggleDrawer() {
+    document.getElementById("drawer").classList.toggle("open");
+}
+</script>
+
+</body>
+</html>
