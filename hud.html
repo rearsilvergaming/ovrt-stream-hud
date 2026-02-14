@@ -22,7 +22,7 @@ html, body {
 
 .container {
     position: relative;
-    height: 100vh;
+    height: 100%;
     width: 100%;
     background: var(--bg);
     backdrop-filter: blur(14px);
@@ -47,6 +47,7 @@ html, body {
     bottom: 0;
     left: 0;
     right: 0;
+    overflow: hidden;
 }
 
 
@@ -214,17 +215,33 @@ window.addEventListener("api-ready", function () {
 alert("Full URL: " + window.location.href);
 
 const params = new URLSearchParams(window.location.search);
-const channel = params.get("channel");
+let channel = params.get("channel");
 
-alert("Channel param: " + channel);
-
+const section = document.querySelector(".section");
 
 if (channel) {
+
     document.getElementById("chatFrame").src =
         "https://rearsilvergaming.github.io/ovrt-stream-hud/chat.html?channel=" +
         encodeURIComponent(channel);
-}
 
+} else {
+
+    // Replace chat area with login UI
+    section.innerHTML = `
+        <div style="padding:20px;">
+            <h3 style="margin-top:0;">Enter Twitch Channel</h3>
+            <input id="loginChannel"
+                   type="text"
+                   placeholder="rearsilver"
+                   style="width:100%; padding:8px; margin-top:10px;">
+            <button onclick="login()"
+                    style="margin-top:10px;">
+                Launch Chat
+            </button>
+        </div>
+    `;
+}
 
 // Drawer toggle
 function toggleDrawer() {
@@ -264,6 +281,20 @@ function logout() {
     // For now, this simply reloads the HUD page without parameters.
     window.location.href = "https://rearsilvergaming.github.io/ovrt-stream-hud/hud.html";
 }
+    function login() {
+
+    const input = document.getElementById("loginChannel").value.trim();
+
+    if (!input) {
+        API.sendNotification("Twitch Chat HUD", "Enter a channel name.");
+        return;
+    }
+
+    window.location.href =
+        "https://rearsilvergaming.github.io/ovrt-stream-hud/hud.html?channel=" +
+        encodeURIComponent(input);
+}
+
 
 </script>
 
