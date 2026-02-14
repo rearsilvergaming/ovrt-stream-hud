@@ -42,8 +42,13 @@ html, body {
 }
 
 .section {
-    height: calc(100vh - 36px);
+    position: absolute;
+    top: 36px;
+    bottom: 0;
+    left: 0;
+    right: 0;
 }
+
 
 iframe {
     width: 100%;
@@ -249,9 +254,17 @@ document.getElementById("fps").oninput = e => {
 
 // Logout clears saved channel
 function logout() {
+    // Clear any saved channel (future use)
     localStorage.removeItem("twitchChannel");
-    alert("Channel cleared. Close and reopen HUD.");
+
+    // OVRT-friendly feedback (alerts can be suppressed in overlays)
+    API.sendNotification("Twitch Chat HUD", "Logged out. Returning to login…");
+
+    // Reload HUD into "no-channel" state (we'll implement the login view next)
+    // For now, this simply reloads the HUD page without parameters.
+    window.location.href = "https://rearsilvergaming.github.io/ovrt-stream-hud/hud.html";
 }
+
 </script>
 
 </body>
