@@ -18,13 +18,12 @@ html, body {
     background: transparent;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     height: 100%;
-    overflow: hidden;
 }
 
 
 .container {
     position: relative;
-    height: 100%;
+    height: 100vh;
     width: 100%;
     background: var(--bg);
     backdrop-filter: blur(14px);
@@ -207,6 +206,33 @@ window.addEventListener("api-ready", function () {
     API.getUniqueID().then(uid => {
         if (uid !== -1) {
             Overlay = new OVRTOverlay(uid);
+            // === CONTROL PANEL WIRING ===
+
+// Anchor
+document.getElementById("anchor").addEventListener("change", function (e) {
+    Overlay.setAttachedDevice(parseInt(e.target.value));
+});
+
+// Size
+document.getElementById("size").addEventListener("input", function (e) {
+    Overlay.setSize(parseFloat(e.target.value));
+});
+
+// Opacity
+document.getElementById("opacity").addEventListener("input", function (e) {
+    Overlay.setOpacity(parseFloat(e.target.value));
+});
+
+// Curvature
+document.getElementById("curve").addEventListener("input", function (e) {
+    Overlay.setCurve(parseFloat(e.target.value));
+});
+
+// Framerate
+document.getElementById("fps").addEventListener("input", function (e) {
+    Overlay.setFramerate(parseInt(e.target.value));
+});
+
 
             API.sendNotification("HUD Ready", "Overlay instance created");
         }
@@ -214,8 +240,6 @@ window.addEventListener("api-ready", function () {
 });
     
 // Load chat (delegate Twitch embedding to chat.html)
-alert("Full URL: " + window.location.href);
-
 const params = new URLSearchParams(window.location.search);
 let channel = params.get("channel");
 
@@ -249,27 +273,6 @@ if (channel) {
 function toggleDrawer() {
     document.getElementById("drawer").classList.toggle("open");
 }
-
-// Live control wiring
-document.getElementById("anchor").onchange = e => {
-    if (Overlay) Overlay.setAttachedDevice(parseInt(e.target.value));
-};
-
-document.getElementById("size").oninput = e => {
-    if (Overlay) Overlay.setSize(parseFloat(e.target.value));
-};
-
-document.getElementById("opacity").oninput = e => {
-    if (Overlay) Overlay.setOpacity(parseFloat(e.target.value));
-};
-
-document.getElementById("curve").oninput = e => {
-    if (Overlay) Overlay.setCurve(parseFloat(e.target.value));
-};
-
-document.getElementById("fps").oninput = e => {
-    if (Overlay) Overlay.setFramerate(parseInt(e.target.value));
-};
 
 // Logout clears saved channel
 function logout() {
