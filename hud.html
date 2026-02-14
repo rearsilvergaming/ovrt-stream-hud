@@ -202,10 +202,13 @@ window.addEventListener("api-ready", function () {
 });
 
 // Load chat (delegate Twitch embedding to chat.html)
+alert("Full URL: " + window.location.href);
+
 const params = new URLSearchParams(window.location.search);
 const channel = params.get("channel");
-    
+
 alert("Channel param: " + channel);
+
 
 if (channel) {
     document.getElementById("chatFrame").src =
