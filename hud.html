@@ -66,6 +66,15 @@ iframe {
     transition: transform 0.25s ease;
     z-index: 10;
 }
+    .drawer select,
+.drawer input {
+    background: rgba(16,18,24,0.95);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 6px 8px;
+    border-radius: 8px;
+}
+
 
 .drawer.open {
     transform: translateX(0);
@@ -73,30 +82,31 @@ iframe {
 
 .tab {
     position: absolute;
-    right: 0;
+    left: -26px;
     top: 80px;
     width: 26px;
     height: 60px;
     background: var(--panel);
-    border-left: 1px solid var(--border);
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
+    border: 1px solid var(--border);
+    border-right: none;
     border-radius: 8px 0 0 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    z-index: 11;
     font-size: 14px;
 }
 
+
+
 label {
     font-size: 12px;
-    opacity: 0.75;
     margin-top: 14px;
     display: block;
     color: var(--text);
+    opacity: 0.8;
 }
+
 
 
 input[type=range], select {
@@ -138,9 +148,10 @@ button {
         <iframe id="chatFrame"></iframe>
     </div>
 
+<div class="drawer" id="drawer">
+
     <div class="tab" onclick="toggleDrawer()">⚙</div>
 
-    <div class="drawer" id="drawer">
 
         <label>Anchor</label>
         <select id="anchor">
@@ -193,6 +204,8 @@ window.addEventListener("api-ready", function () {
 // Load chat (delegate Twitch embedding to chat.html)
 const params = new URLSearchParams(window.location.search);
 const channel = params.get("channel");
+    
+alert("Channel param: " + channel);
 
 if (channel) {
     document.getElementById("chatFrame").src =
