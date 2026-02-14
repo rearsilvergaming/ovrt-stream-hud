@@ -2,29 +2,28 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>RearSilver Stream HUD</title>
+<title>Twitch Chat HUD</title>
 
 <style>
 :root {
-    --bg: rgba(18,20,24,0.95);
+    --bg: rgba(18,20,24,0.96);
     --panel: rgba(28,30,36,0.98);
     --border: rgba(255,255,255,0.08);
     --text: rgba(255,255,255,0.9);
 }
 
-body {
+html, body {
     margin: 0;
+    padding: 0;
     background: transparent;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    display: flex;
-    height: 100vh;
-    color: var(--text);
+    overflow: hidden;
 }
 
 .container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+    position: relative;
+    height: 100vh;
+    width: 100%;
     background: var(--bg);
     backdrop-filter: blur(14px);
     border-radius: 14px;
@@ -39,17 +38,11 @@ body {
     align-items: center;
     justify-content: space-between;
     padding: 0 10px;
-}
-
-.toggle-btn {
-    cursor: pointer;
-    font-size: 14px;
-    opacity: 0.7;
+    font-size: 13px;
 }
 
 .section {
-    flex: 1;
-    overflow: hidden;
+    height: calc(100vh - 36px);
 }
 
 iframe {
@@ -58,42 +51,66 @@ iframe {
     border: none;
 }
 
-/* Control Drawer */
+/* Side Drawer */
 
 .drawer {
     position: absolute;
     top: 0;
-    right: -260px;
-    width: 260px;
+    right: 0;
     height: 100%;
+    width: 260px;
     background: var(--panel);
     border-left: 1px solid var(--border);
     padding: 16px;
-    transition: right 0.25s ease;
+    transform: translateX(100%);
+    transition: transform 0.25s ease;
+    z-index: 10;
 }
 
 .drawer.open {
+    transform: translateX(0);
+}
+
+.tab {
+    position: absolute;
     right: 0;
+    top: 80px;
+    width: 26px;
+    height: 60px;
+    background: var(--panel);
+    border-left: 1px solid var(--border);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    border-radius: 8px 0 0 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 11;
+    font-size: 14px;
 }
 
 label {
     font-size: 12px;
     opacity: 0.7;
-    margin-top: 12px;
+    margin-top: 14px;
     display: block;
 }
 
-input[type=range] {
+input[type=range], select {
     width: 100%;
+    margin-top: 4px;
 }
 
-select {
+button {
     width: 100%;
-    padding: 6px;
-    background: #101218;
+    margin-top: 18px;
+    padding: 8px;
+    background: #1f232c;
     border: 1px solid var(--border);
-    color: white;
     border-radius: 6px;
+    color: white;
+    cursor: pointer;
 }
 </style>
 </head>
@@ -103,43 +120,66 @@ select {
 <div class="container">
 
     <div class="topbar">
-        <span>Stream HUD</span>
-        <span class="toggle-btn" onclick="toggleDrawer()">⚙</span>
+        <span>Twitch Chat HUD</span>
     </div>
 
     <div class="section">
         <iframe id="chatFrame"></iframe>
     </div>
 
-</div>
+    <div class="tab" onclick="toggleDrawer()">⚙</div>
 
-<div class="drawer" id="drawer">
+    <div class="drawer" id="drawer">
 
-    <label>Anchor</label>
-    <select id="anchor">
-        <option value="0">World</option>
-        <option value="1">Head</option>
-        <option value="2">Right Hand</option>
-        <option value="3">Left Hand</option>
-    </select>
+        <label>Anchor</label>
+        <select id="anchor">
+            <option value="0">World</option>
+            <option value="1">Head</option>
+            <option value="2">Right Hand</option>
+            <option value="3">Left Hand</option>
+        </select>
 
-    <label>Size</label>
-    <input id="size" type="range" min="0.2" max="1.2" step="0.05" value="0.35">
+        <label>Size</label>
+        <input id="size" type="range" min="0.2" max="1.2" step="0.05" value="0.35">
 
-    <label>Opacity</label>
-    <input id="opacity" type="range" min="0.2" max="1" step="0.05" value="0.9">
+        <label>Opacity</label>
+        <input id="opacity" type="range" min="0.2" max="1" step="0.05" value="0.9">
 
-    <label>Curvature</label>
-    <input id="curve" type="range" min="0" max="1" step="0.05" value="0">
+        <label>Curvature</label>
+        <input id="curve" type="range" min="0" max="1" step="0.05" value="0">
 
-    <label>Framerate</label>
-    <input id="fps" type="range" min="15" max="60" step="5" value="30">
+        <label>Framerate</label>
+        <input id="fps" type="range" min="15" max="60" step="5" value="30">
+
+        <button onclick="logout()">Logout</button>
+
+        <div style="margin-top:12px; font-size:11px; opacity:0.5;">
+            Developed by RearSilver
+        </div>
+
+    </div>
 
 </div>
 
 <script src="https://rearsilvergaming.github.io/ovrt-stream-hud/ovrt-helper.js"></script>
 
 <script>
+const API = new OVRT({ function_queue: true });
+let Overlay = null;
+
+// Set proper window title
+window.addEventListener("api-ready", function () {
+
+    API.setCurrentBrowserTitle("Twitch Chat HUD");
+
+    API.getUniqueID().then(uid => {
+        if (uid !== -1) {
+            Overlay = new OVRTOverlay(uid);
+        }
+    });
+});
+
+// Load chat
 const params = new URLSearchParams(window.location.search);
 const channel = params.get("channel");
 
@@ -149,8 +189,36 @@ if (channel) {
         "/chat?parent=rearsilvergaming.github.io&darkpopout";
 }
 
+// Drawer toggle
 function toggleDrawer() {
     document.getElementById("drawer").classList.toggle("open");
+}
+
+// Live control wiring
+document.getElementById("anchor").onchange = e => {
+    if (Overlay) Overlay.setAttachedDevice(parseInt(e.target.value));
+};
+
+document.getElementById("size").oninput = e => {
+    if (Overlay) Overlay.setSize(parseFloat(e.target.value));
+};
+
+document.getElementById("opacity").oninput = e => {
+    if (Overlay) Overlay.setOpacity(parseFloat(e.target.value));
+};
+
+document.getElementById("curve").oninput = e => {
+    if (Overlay) Overlay.setCurve(parseFloat(e.target.value));
+};
+
+document.getElementById("fps").oninput = e => {
+    if (Overlay) Overlay.setFramerate(parseInt(e.target.value));
+};
+
+// Logout clears saved channel
+function logout() {
+    localStorage.removeItem("twitchChannel");
+    alert("Channel cleared. Close and reopen HUD.");
 }
 </script>
 
