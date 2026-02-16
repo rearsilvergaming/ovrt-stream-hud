@@ -8,16 +8,18 @@
 html, body {
     margin: 0;
     padding: 0;
-    height: 100%;
+    width: 1100px;     /* lock overlay canvas width */
+    height: 900px;     /* match overlay height */
+    overflow: hidden;  /* prevent scroll bleed */
     font-family: Verdana, sans-serif;
 }
 
-/* Root split layout */
 .root {
     position: relative;
-    height: 100vh;
-    width: 1100px; /* 800 chat + 300 panel */
+    width: 1100px;
+    height: 100%;
 }
+
 
 /* LEFT SIDE — CHAT ONLY */
 .chat-area {
