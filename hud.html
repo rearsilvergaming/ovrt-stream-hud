@@ -14,15 +14,18 @@ html, body {
 
 /* Root split layout */
 .root {
-    display: flex;
+    position: relative;
     height: 100vh;
-    width: 100%;
+    width: 1100px; /* 800 chat + 300 panel */
 }
 
 /* LEFT SIDE — CHAT ONLY */
 .chat-area {
-    width: 800px;            /* chat never changes */
-    flex: 0 0 800px;         /* lock it */
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 800px;
+    height: 100%;
     display: flex;
     flex-direction: column;
     background: #0f1115;
@@ -80,9 +83,9 @@ html, body {
 
 /* MY VERSION OF THE CONTROL PANEL WITH NO CHAT SECTION SIZE CHANGE*/
 .control-panel {
-   position: absolute;
+    position: absolute;
     top: 0;
-    right: 0;
+    left: 800px; /* EXACTLY after chat */
     width: 300px;
     height: 100%;
     background: #6441a5;
@@ -90,10 +93,11 @@ html, body {
     box-sizing: border-box;
     overflow-y: auto;
     color: white;
+
     opacity: 1;
+    pointer-events: auto;
     transition: opacity 0.20s ease;
 }
-
 
 /* CHATGPT VERSION OF THE CONTROL PANEL WITH CHAT SECTION GROWTH*/
 /*.control-panel {
